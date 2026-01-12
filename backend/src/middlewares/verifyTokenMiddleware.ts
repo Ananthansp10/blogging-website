@@ -1,0 +1,56 @@
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import { ApiError } from "../utils/error";
+import { HTTP_STATUS } from "../common/statusCode";
+import { createAccessToken } from "../utils/tokenGenerate";
+
+const ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_SECRET ?? "";
+const REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_SECRET ?? "";
+
+interface JwtPayload {
+  userId: string;
+  email: string;
+}
+
+export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const accessToken = req.cookies.accessToken;
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!accessToken && !refreshToken) {
+      throw new ApiError(HTTP_STATUS.UNAUTHORIZED, "Authentication required");
+    }
+
+    if (accessToken) {
+      try {
+        const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET) as JwtPayload;
+        return next();
+      } catch (err: any) {
+        if (err.name !== "TokenExpiredError") {
+          throw new ApiError(HTTP_STATUS.UNAUTHORIZED, "Invalid access token");
+        }
+      }
+    }
+
+    if (refreshToken) {
+      try {
+        const decodedRefresh = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET) as JwtPayload;
+        const newAccessToken = createAccessToken({ userId: decodedRefresh.userId, email: decodedRefresh.email });
+
+        res.cookie("accessToken", newAccessToken, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 15 * 60 * 1000
+        });
+        return next();
+      } catch (err) {
+        throw new ApiError(HTTP_STATUS.UNAUTHORIZED, "Invalid refresh token, please login again");
+      }
+    }
+
+    throw new ApiError(HTTP_STATUS.UNAUTHORIZED, "Authentication required");
+  } catch (error) {
+    next(error);
+  }
+};
