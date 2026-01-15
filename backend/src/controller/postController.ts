@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { HTTP_STATUS } from "../common/statusCode";
-import { ERROR_MESSAGES } from "../common/errorMessages";
-import { ApiError } from "../utils/error";
-import { postModel } from "../models/postModel";
+import { HTTP_STATUS } from "../common/statusCode.js";
+import { ERROR_MESSAGES } from "../common/errorMessages.js";
+import { ApiError } from "../utils/error.js";
+import { postModel } from "../models/postModel.js";
 import mongoose from "mongoose";
-import { sendSuccess } from "../utils/success";
-import { SUCCESS_MESSAGES } from "../common/successMessage";
+import { sendSuccess } from "../utils/success.js";
+import { SUCCESS_MESSAGES } from "../common/successMessage.js";
+import { userModel } from "../models/userModel.js";
 export const createPost = async (req:Request,res:Response,next:NextFunction):Promise<void> => {
     try {
         const {title,content,author} = req.body
@@ -58,10 +59,21 @@ export const editPost = async (req:Request,res:Response,next:NextFunction):Promi
 export const getPost = async (req:Request,res:Response,next:NextFunction):Promise<void> => {
     try {
         const userId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
-        const posts = await postModel.find({_id:new mongoose.Types.ObjectId(userId),isDeleted:false})
+        const user = userModel.findById(new mongoose.Types.ObjectId(userId))
+        if(!user){
+            throw new ApiError(HTTP_STATUS.NOT_FOUND,ERROR_MESSAGES.USER_NOT_FOUND)
+        }
+        const posts = await postModel.find({author:new mongoose.Types.ObjectId(userId),isDeleted:false})
+        const postsData = posts.map((data)=>{
+            const doc = data.toObject()
+            return {
+                ...doc,
+                _id:data._id.toString()
+            }
+        })
         sendSuccess(res,{
             statusCode:HTTP_STATUS.OK,
-            data:posts
+            data:postsData
         })
     } catch (error) {
         next(error)

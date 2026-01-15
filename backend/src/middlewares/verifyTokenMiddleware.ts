@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { ApiError } from "../utils/error";
-import { HTTP_STATUS } from "../common/statusCode";
-import { createAccessToken } from "../utils/tokenGenerate";
+import { ApiError } from "../utils/error.js";
+import { HTTP_STATUS } from "../common/statusCode.js";
+import { createAccessToken } from "../utils/tokenGenerate.js";
 
 const ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_SECRET ?? "";
 const REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_SECRET ?? "";

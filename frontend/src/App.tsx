@@ -1,54 +1,22 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/Authcontext';
-import { Navbar } from './components/Navbar';
-import { ProtectedRoute } from './components/ProtectedRoute';
-import { Home } from './pages/Home';
-import  {SignupPage}  from './pages/SignupPages';
-import { Login } from './pages/Login';
-import { MyPost } from './pages/MyPost';
-import { CreatePost } from './pages/CreatePost';
-import { EditPost } from './pages/EditPost';
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
+import SignupPage from "./pages/SignupPage"
+import SigninPage from "./pages/SigninPage"
+import WelcomePage from "./pages/WelcomePage"
+import DashboardPage from "./pages/DashboardPage"
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <div className="min-h-screen bg-gray-50">
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/my-posts"
-              element={
-                <ProtectedRoute>
-                  <MyPost />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/create-post"
-              element={
-                <ProtectedRoute>
-                  <CreatePost />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/edit-post/:id"
-              element={
-                <ProtectedRoute>
-                  <EditPost />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </div>
-      </AuthProvider>
-    </Router>
-  );
+    <div>
+      <Router>
+        <Routes>
+          <Route path="/" element={<WelcomePage/>}/>
+          <Route path="/register" element={<SignupPage/>}/>
+          <Route path="/login" element={<SigninPage/>}/>
+          <Route path="/dashboard" element={<DashboardPage/>}/>
+        </Routes>
+      </Router>
+    </div>
+  )
 }
 
-export default App;
+export default App

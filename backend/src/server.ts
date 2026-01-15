@@ -1,12 +1,13 @@
-import express from 'express'
 import dotenv from 'dotenv'
+dotenv.config()
+import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-dotenv.config()
-import { connectDb } from './config/databaseConfig'
-import authRouter from './routes/authRoutes'
-import postRouter from './routes/postRoutes'
-import { errorHandler } from './middlewares/errorMiddleware'
+import { connectDb } from './config/databaseConfig.js'
+import authRouter from './routes/authRoutes.js'
+import postRouter from './routes/postRoutes.js'
+import userRouter from './routes/userRoutes.js'
+import { errorHandler } from './middlewares/errorMiddleware.js'
 const app = express()
 
 const port = process.env.PORT
@@ -22,6 +23,7 @@ app.use(cookieParser())
 
 app.use('/api/auth',authRouter)
 app.use('/api/posts',postRouter)
+app.use('/api/user',userRouter)
 
 app.use(errorHandler)
 

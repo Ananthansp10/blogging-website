@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express"
-import { ApiError } from "../utils/error"
-import { HTTP_STATUS } from "../common/statusCode"
-import { ERROR_MESSAGES } from "../common/errorMessages"
-import { userModel } from "../models/userModel"
+import { ApiError } from "../utils/error.js"
+import { HTTP_STATUS } from "../common/statusCode.js"
+import { ERROR_MESSAGES } from "../common/errorMessages.js"
+import { userModel } from "../models/userModel.js"
 import bcrypt from "bcryptjs"
-import { sendSuccess } from "../utils/success"
-import { SUCCESS_MESSAGES } from "../common/successMessage"
-import { createAccessToken, createRefreshToken } from "../utils/tokenGenerate"
+import { sendSuccess } from "../utils/success.js"
+import { SUCCESS_MESSAGES } from "../common/successMessage.js"
+import { createAccessToken, createRefreshToken } from "../utils/tokenGenerate.js"
 export const registerUser = async (req:Request,res:Response,next:NextFunction):Promise<void> => {
     try {
         const {userName,email,phoneNumber,password} = req.body
