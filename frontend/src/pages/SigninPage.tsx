@@ -1,5 +1,4 @@
 import React, { useState, FormEvent } from 'react';
-import axios from '../config/axiosConfig'
 import { useNavigate, Link } from 'react-router-dom';
 import { userLogin } from '../services/authService';
 import { toast } from 'react-toastify';
